@@ -2,33 +2,39 @@ const API="https://script.google.com/macros/s/AKfycbxCe09JvS-p2Wpfutv_y3lm8qbec1
 
 fetch(API)
 .then(r=>r.json())
-.then(data=>{
+.then(list=>{
 
-    const container=document.getElementById("movies");
+const movies=document.getElementById("movies");
 
-    data.forEach(movie=>{
+list.forEach((movie,index)=>{
 
-        const card=document.createElement("div");
-        card.className="movie";
-        card.tabIndex=0;
+const div=document.createElement("div");
 
-        card.innerHTML=`
-        <img src="${movie.Poster}">
-        <h3>${movie["Movie Name"]}</h3>
-        `;
+div.className="movie";
 
-        card.onclick=()=>{
-            location.href=`player.html?imdb=${movie["IMDB ID"]}`;
-        };
+div.tabIndex=index+1;
 
-        card.onkeydown=(e)=>{
-            if(e.key==="Enter"){
-                card.click();
-            }
-        };
+div.innerHTML=`
+<img src="${movie.Poster}">
+<h3>${movie["Movie Name"]}</h3>
+`;
 
-        container.appendChild(card);
+div.onclick=()=>{
 
-    });
+location.href=`player.html?id=${movie["IMDB ID"]}`;
+
+};
+
+div.addEventListener("keydown",e=>{
+
+if(e.key=="Enter")
+
+div.click();
+
+});
+
+movies.appendChild(div);
+
+});
 
 });
