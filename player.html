@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+
+<style>
+
+html,body{
+margin:0;
+width:100%;
+height:100%;
+overflow:hidden;
+background:#000;
+}
+
+iframe{
+position:fixed;
+left:0;
+top:0;
+width:100%;
+height:100%;
+border:none;
+}
+
+#cursor{
+position:fixed;
+width:18px;
+height:18px;
+background:#ff0000;
+border-radius:50%;
+left:50%;
+top:50%;
+pointer-events:none;
+z-index:999999;
+}
+
+</style>
+
+</head>
+<body>
+
+<div id="cursor"></div>
+
+<iframe id="player" allowfullscreen></iframe>
+
+<script>
+
+const imdb=new URLSearchParams(location.search).get("imdb");
+
+document.getElementById("player").src=
+`https://gemma416okl.com/play/${imdb}`;
+
+let x=window.innerWidth/2;
+let y=window.innerHeight/2;
+
+const cursor=document.getElementById("cursor");
+
+function draw(){
+
+cursor.style.left=x+"px";
+cursor.style.top=y+"px";
+
+}
+
+draw();
+
+document.addEventListener("keydown",(e)=>{
+
+const speed=25;
+
+switch(e.key){
+
+case "ArrowUp":
+y-=speed;
+break;
+
+case "ArrowDown":
+y+=speed;
+break;
+
+case "ArrowLeft":
+x-=speed;
+break;
+
+case "ArrowRight":
+x+=speed;
+break;
+
+case "Enter":
+
+const iframe=document.getElementById("player");
+
+iframe.contentWindow.postMessage({
+type:"click",
+x:x,
+y:y
+},"*");
+
+break;
+
+}
+
+draw();
+
+});
+
+</script>
+
+</body>
+</html>
