@@ -1,0 +1,33 @@
+body{
+    margin:0;
+    background:#111;
+    color:#fff;
+    font-family:Arial;
+}
+
+.movies{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+    gap:20px;
+    padding:20px;
+}
+
+.movie{
+    cursor:pointer;
+    transition:.3s;
+}
+
+.movie:hover,
+.movie:focus{
+    transform:scale(1.05);
+}
+
+.movie img{
+    width:100%;
+    border-radius:10px;
+}
+
+.movie h3{
+    text-align:center;
+    font-size:16px;
+}
