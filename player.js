@@ -1,52 +1,81 @@
-const imdb=new URLSearchParams(location.search).get("id");
+const imdb = new URLSearchParams(location.search).get("id");
 
-document.getElementById("frame").src=
-`https://gemma416okl.com/play/${imdb}`;
+const frame = document.getElementById("frame");
+frame.src = `https://gemma416okl.com/play/${imdb}`;
 
-let x=window.innerWidth/2;
-let y=window.innerHeight/2;
+// Prevent iframe from taking keyboard focus
+frame.setAttribute("tabindex", "-1");
 
-const cursor=document.getElementById("cursor");
+let x = window.innerWidth / 2;
+let y = window.innerHeight / 2;
 
-function update(){
+const cursor = document.getElementById("cursor");
 
-cursor.style.left=x+"px";
-cursor.style.top=y+"px";
-
+function updateCursor() {
+    cursor.style.left = x + "px";
+    cursor.style.top = y + "px";
 }
 
-update();
+updateCursor();
 
-document.addEventListener("keydown",e=>{
+window.focus();
+document.body.focus();
 
-const step=25;
+window.addEventListener("keydown", function(e){
 
-switch(e.key){
+    const step = 25;
 
-case"ArrowLeft":
-x-=step;
-break;
+    switch(e.key){
 
-case"ArrowRight":
-x+=step;
-break;
+        case "ArrowLeft":
+            x -= step;
+            break;
 
-case"ArrowUp":
-y-=step;
-break;
+        case "ArrowRight":
+            x += step;
+            break;
 
-case"ArrowDown":
-y+=step;
-break;
+        case "ArrowUp":
+            y -= step;
+            break;
 
-case"Enter":
+        case "ArrowDown":
+            y += step;
+            break;
 
-document.getElementById("frame").focus();
+        case "Enter":
 
-break;
+            e.preventDefault();
 
-}
+            console.log("OK Pressed");
 
-update();
+            // Keep keyboard focus on parent page
+            window.focus();
+            document.body.focus();
 
-});
+            return;
+
+        case "Backspace":
+        case "Escape":
+            history.back();
+            return;
+    }
+
+    x = Math.max(0, Math.min(window.innerWidth, x));
+    y = Math.max(0, Math.min(window.innerHeight, y));
+
+    updateCursor();
+
+}, true);
+
+frame.onload = function(){
+
+    // Refocus parent after iframe loads
+    setTimeout(() => {
+
+        window.focus();
+        document.body.focus();
+
+    },100);
+
+};
