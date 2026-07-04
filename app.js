@@ -1,40 +1,76 @@
-const API="https://script.google.com/macros/s/AKfycbxCe09JvS-p2Wpfutv_y3lm8qbec1pAML4kecgnUB9ou-mqM8LuqVQnhzmu63DWA7y66Q/exec";
+const API = "https://script.google.com/macros/s/AKfycbxCe09JvS-p2Wpfutv_y3lm8qbec1pAML4kecgnUB9ou-mqM8LuqVQnhzmu63DWA7y66Q/exec";
 
-fetch(API)
-.then(r=>r.json())
-.then(list=>{
+const container = document.getElementById("movies");
 
-const movies=document.getElementById("movies");
+async function loadMovies() {
+    try {
+        container.innerHTML = "<h2>Loading...</h2>";
 
-list.forEach((movie,index)=>{
+        const response = await fetch(API);
+        const json = await response.json();
 
-const div=document.createElement("div");
+        const movies = json.data || [];
 
-div.className="movie";
+        container.innerHTML = "";
 
-div.tabIndex=index+1;
+        if (movies.length === 0) {
+            container.innerHTML = "<h2>No Movies Found</h2>";
+            return;
+        }
 
-div.innerHTML=`
-<img src="${movie.Poster}">
-<h3>${movie["Movie Name"]}</h3>
-`;
+        movies.forEach((movie, index) => {
 
-div.onclick=()=>{
+            const card = document.createElement("div");
+            card.className = "movie";
+            card.tabIndex = index + 1;
 
-location.href=`player.html?id=${movie["IMDB ID"]}`;
+            const poster =
+                movie.Poster.startsWith("http")
+                    ? movie.Poster
+                    : `https://m.media-amazon.com/images/M/${movie.Poster}`;
 
-};
+            card.innerHTML = `
+                <img
+                    src="${poster}"
+                    alt="${movie["Movie Name"]}"
+                    loading="lazy"
+                    onerror="this.src='https://placehold.co/300x450?text=No+Image';"
+                >
+                <h3>${movie["Movie Name"]}</h3>
+            `;
 
-div.addEventListener("keydown",e=>{
+            card.addEventListener("click", () => {
+                window.location.href = `player.html?id=${encodeURIComponent(movie["IMDB ID"])}`;
+            });
 
-if(e.key=="Enter")
+            card.addEventListener("keydown", (e) => {
 
-div.click();
+                if (e.key === "Enter") {
+                    card.click();
+                }
 
-});
+            });
 
-movies.appendChild(div);
+            container.appendChild(card);
 
-});
+        });
 
-});
+        // Focus first card for TV/Android TV
+        const first = document.querySelector(".movie");
+        if (first) {
+            first.focus();
+        }
+
+    } catch (err) {
+
+        console.error(err);
+
+        container.innerHTML = `
+            <div style="padding:30px;text-align:center;color:red">
+                Failed to load movies.
+            </div>
+        `;
+    }
+}
+
+loadMovies();
