@@ -1,81 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Player</title>
+
+<style>
+html,
+body{
+    margin:0;
+    padding:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#000;
+}
+
+#frame{
+    width:100%;
+    height:100%;
+    border:none;
+}
+</style>
+</head>
+
+<body tabindex="-1">
+
+<iframe
+    id="frame"
+    allowfullscreen
+    allow="autoplay; fullscreen">
+</iframe>
+
+<script>
 const imdb = new URLSearchParams(location.search).get("id");
 
 const frame = document.getElementById("frame");
 frame.src = `https://gemma416okl.com/play/${imdb}`;
 
-// Prevent iframe from taking keyboard focus
-frame.setAttribute("tabindex", "-1");
+// Prevent iframe from receiving keyboard focus
+frame.tabIndex = -1;
 
-let x = window.innerWidth / 2;
-let y = window.innerHeight / 2;
-
-const cursor = document.getElementById("cursor");
-
-function updateCursor() {
-    cursor.style.left = x + "px";
-    cursor.style.top = y + "px";
-}
-
-updateCursor();
-
+// Focus parent page
 window.focus();
 document.body.focus();
 
-window.addEventListener("keydown", function(e){
+// Handle Back button
+window.addEventListener("keydown", function (e) {
 
-    const step = 25;
-
-    switch(e.key){
-
-        case "ArrowLeft":
-            x -= step;
-            break;
-
-        case "ArrowRight":
-            x += step;
-            break;
-
-        case "ArrowUp":
-            y -= step;
-            break;
-
-        case "ArrowDown":
-            y += step;
-            break;
-
-        case "Enter":
-
-            e.preventDefault();
-
-            console.log("OK Pressed");
-
-            // Keep keyboard focus on parent page
-            window.focus();
-            document.body.focus();
-
-            return;
+    switch (e.key) {
 
         case "Backspace":
         case "Escape":
+            e.preventDefault();
             history.back();
-            return;
+            break;
     }
-
-    x = Math.max(0, Math.min(window.innerWidth, x));
-    y = Math.max(0, Math.min(window.innerHeight, y));
-
-    updateCursor();
 
 }, true);
 
-frame.onload = function(){
+// Refocus after iframe loads
+frame.onload = function () {
 
-    // Refocus parent after iframe loads
     setTimeout(() => {
-
         window.focus();
         document.body.focus();
-
-    },100);
+    }, 100);
 
 };
+
+// Refocus if window loses focus
+window.addEventListener("blur", () => {
+
+    setTimeout(() => {
+        window.focus();
+        document.body.focus();
+    }, 10);
+
+});
+</script>
+
+</body>
+</html>
